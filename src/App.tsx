@@ -103,7 +103,7 @@ function App() {
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
             <input
               type="text"
-              placeholder="Rechercher des étoiles..."
+              placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-8 p-2 rounded border border-gray-300"

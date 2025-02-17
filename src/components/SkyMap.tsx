@@ -24,8 +24,52 @@ const CONSTELLATIONS: Record<string, Constellation> = {
       ['Mizar', 'Alkaid']
     ]
   },
-  // Ajoutez d'autres constellations ici
-};
+  'Ori': {
+      id: 'ori',
+      name: 'Orion',
+      stars: ['Betelgeuse', 'Bellatrix', 'Alnilam', 'Mintaka', 'Rigel', 'Saiph'],
+      lines: [
+      ['Betelgeuse', 'Bellatrix'],
+      ['Bellatrix', 'Alnilam'],
+      ['Alnilam', 'Mintaka'],
+      ['Mintaka', 'Rigel'],
+      ['Rigel', 'Saiph']
+    ]
+  },
+    'Cas': {
+      id: 'cas',
+      name: 'Cassiopeia',
+      stars: ['Schedar', 'Caph', 'Gamma Cas', 'Ruchbah', 'Segin'],
+      lines: [
+      ['Schedar', 'Caph'],
+      ['Caph', 'Gamma Cas'],
+      ['Gamma Cas', 'Ruchbah'],
+      ['Ruchbah', 'Segin']
+    ]
+  },
+    'Cyg': {
+      id: 'cyg',
+      name: 'Cygnus',
+      stars: ['Deneb', 'Albireo', 'Sadr', 'Gienah', 'Delta Cyg'],
+      lines: [
+        ['Deneb', 'Albireo'],
+        ['Albireo', 'Sadr'],
+        ['Sadr', 'Gienah'],
+        ['Gienah', 'Delta Cyg']
+    ]
+  },
+    'Leo': {
+      id: 'leo',
+      name: 'Leo',
+      stars: ['Regulus', 'Denebola', 'Algieba', 'Zosma', 'Chort'],
+      lines: [
+        ['Regulus', 'Denebola'],
+        ['Denebola', 'Algieba'],
+        ['Algieba', 'Zosma'],
+        ['Zosma', 'Chort']
+    ]
+  }
+  };
 
 export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -63,13 +107,9 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
       ctx.fill();
 
       // Draw constellation lines if the star is part of the hovered constellation
-      if (hoveredObject?.type === 'star' && 
-          hoveredObject.constellation && 
-          star.constellation === hoveredObject.constellation &&
-          showConstellations) {
-        const constellation = CONSTELLATIONS[hoveredObject.constellation];
-        if (constellation) {
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      if (showConstellations) {
+        Object.values(CONSTELLATIONS).forEach(constellation => {
+          ctx.strokeStyle = 'rgb(255, 0, 166)';
           ctx.lineWidth = 1;
           constellation.lines.forEach(([star1, star2]) => {
             const s1 = stars.find(s => s.name === star1);
@@ -81,7 +121,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
               ctx.stroke();
             }
           });
-        }
+        });
       }
     });
 
