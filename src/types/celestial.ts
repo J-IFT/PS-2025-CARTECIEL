@@ -30,6 +30,7 @@ export interface Planet {
   magnitude: number;
   distance: number;
   color: string;
+  description?: string;
 }
 
 export interface Constellation {

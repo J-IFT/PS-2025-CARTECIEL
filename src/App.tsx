@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { SkyMap } from './components/SkyMap';
 import { Star, Planet } from './types/celestial';
-import { Filter } from 'lucide-react';
+import { Filter, Search, ZoomIn, ZoomOut } from 'lucide-react';
 import { loadStarData } from './utils/dataLoader';
 
 function App() {
   const [stars, setStars] = useState<Star[]>([]);
   const [planets, setPlanets] = useState<Planet[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState<'nearest' | 'all'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<'nearest' | 'brightest' | 'all'>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     async function loadData() {
@@ -18,17 +20,15 @@ function App() {
         if (starData.length === 0) {
           throw new Error('No star data loaded');
         }
-        // Filtrer les étoiles visibles à l'œil nu (magnitude < 6)
         const visibleStars = starData.filter(star => star.mag < 6);
         setStars(visibleStars);
 
-        // Données des planètes (positions approximatives)
         const mockPlanets: Planet[] = [
-          { id: 'mercury', name: 'Mercury', ra: 2, dec: 10, magnitude: -0.5, distance: 0.4, color: '#E5E5E5' },
-          { id: 'venus', name: 'Venus', ra: 4, dec: 20, magnitude: -4.4, distance: 0.7, color: '#FFA500' },
-          { id: 'mars', name: 'Mars', ra: 6, dec: 30, magnitude: -2.9, distance: 1.5, color: '#FF4500' },
-          { id: 'jupiter', name: 'Jupiter', ra: 8, dec: 40, magnitude: -2.7, distance: 5.2, color: '#DEB887' },
-          { id: 'saturn', name: 'Saturn', ra: 10, dec: 50, magnitude: 0.6, distance: 9.5, color: '#FFD700' }
+          { id: 'mercury', name: 'Mercury', ra: 2, dec: 10, magnitude: -0.5, distance: 0.4, color: '#E5E5E5', description: "Le plus petit et le plus proche du Soleil" },
+          { id: 'venus', name: 'Venus', ra: 4, dec: 20, magnitude: -4.4, distance: 0.7, color: '#FFA500', description: "La planète la plus chaude du système solaire" },
+          { id: 'mars', name: 'Mars', ra: 6, dec: 30, magnitude: -2.9, distance: 1.5, color: '#FF4500', description: "La planète rouge, cible des futures missions habitées" },
+          { id: 'jupiter', name: 'Jupiter', ra: 8, dec: 40, magnitude: -2.7, distance: 5.2, color: '#DEB887', description: "La plus grande planète du système solaire" },
+          { id: 'saturn', name: 'Saturn', ra: 10, dec: 50, magnitude: 0.6, distance: 9.5, color: '#FFD700', description: "Célèbre pour ses anneaux spectaculaires" }
         ];
         setPlanets(mockPlanets);
         setError(null);
@@ -43,14 +43,39 @@ function App() {
     loadData();
   }, []);
 
-  const filteredStars = selectedFilter === 'nearest'
-    ? [...stars].sort((a, b) => a.dist - b.dist).slice(0, 50)
-    : stars;
+  const filteredStars = (() => {
+    let filtered = [...stars];
+    
+    // Appliquer le filtre sélectionné
+    switch (selectedFilter) {
+      case 'nearest':
+        filtered = filtered.sort((a, b) => a.dist - b.dist).slice(0, 50);
+        break;
+      case 'brightest':
+        filtered = filtered.sort((a, b) => a.mag - b.mag).slice(0, 50);
+        break;
+    }
+
+    // Appliquer la recherche
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(star => 
+        star.name?.toLowerCase().includes(query) ||
+        star.constellation?.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  })();
+
+  const filteredPlanets = planets.filter(planet =>
+    !searchQuery || planet.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-white text-xl">Loading sky map...</div>
+        <div className="text-white text-xl">Chargement...</div>
       </div>
     );
   }
@@ -67,27 +92,59 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <div className="fixed top-4 left-4 z-10 bg-white/90 p-4 rounded-lg shadow-lg">
+      <div className="fixed top-4 left-4 z-10 bg-white/90 p-4 rounded-lg shadow-lg w-64">
         <div className="flex items-center gap-2 mb-4">
           <Filter size={20} />
           <h2 className="font-semibold">Filtres</h2>
         </div>
-        <select
-          value={selectedFilter}
-          onChange={(e) => setSelectedFilter(e.target.value as 'nearest' | 'all')}
-          className="w-full p-2 rounded border border-gray-300"
-        >
-          <option value="all">Toutes les étoiles</option>
-          <option value="nearest">50 étoiles les plus proches</option>
-        </select>
+        
+        <div className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Rechercher des étoiles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 p-2 rounded border border-gray-300"
+            />
+          </div>
+
+          <select
+            value={selectedFilter}
+            onChange={(e) => setSelectedFilter(e.target.value as 'nearest' | 'brightest' | 'all')}
+            className="w-full p-2 rounded border border-gray-300"
+          >
+            <option value="all">Toutes les étoiles</option>
+            <option value="nearest">50 étoiles plus proches</option>
+            <option value="brightest">50 étoiles plus brillantes</option>
+          </select>
+        </div>
       </div>
+
+      <div className="fixed bottom-4 right-4 z-10 flex gap-2">
+        <button
+          onClick={() => setScale(s => Math.min(s + 0.1, 2))}
+          className="bg-white/90 p-2 rounded-lg shadow-lg hover:bg-white"
+        >
+          <ZoomIn size={24} />
+        </button>
+        <button
+          onClick={() => setScale(s => Math.max(s - 0.1, 0.5))}
+          className="bg-white/90 p-2 rounded-lg shadow-lg hover:bg-white"
+        >
+          <ZoomOut size={24} />
+        </button>
+      </div>
+
       <SkyMap
         stars={filteredStars}
-        planets={planets}
+        planets={filteredPlanets}
         selectedFilter={selectedFilter}
+        scale={scale}
       />
     </div>
   );
 }
 
-export default App;
+export default App
