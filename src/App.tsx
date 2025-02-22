@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { SkyMap } from './components/SkyMap';
 import { Star, Planet } from './types/celestial';
 import { Filter, Search, ZoomIn, ZoomOut } from 'lucide-react';
@@ -12,6 +12,8 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [scale, setScale] = useState(1);
+  const [magnitudeFilter, setMagnitudeFilter] = useState<number>(7);
+  const [isMagnitudeFilterActive, setIsMagnitudeFilterActive] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -24,12 +26,16 @@ function App() {
         setStars(visibleStars);
 
         const mockPlanets: Planet[] = [
-          { id: 'mercury', name: 'Mercury', ra: 2, dec: 10, magnitude: -0.5, distance: 0.4, color: '#E5E5E5', description: "Le plus petit et le plus proche du Soleil" },
+          { id: 'mercury', name: 'Mercure', ra: 2, dec: 10, magnitude: -0.5, distance: 0.4, color: '#E5E5E5', description: "Le plus petit et le plus proche du Soleil" },
           { id: 'venus', name: 'Venus', ra: 4, dec: 20, magnitude: -4.4, distance: 0.7, color: '#FFA500', description: "La planète la plus chaude du système solaire" },
+          { id: 'earth', name: 'Terre', ra: 6, dec: 30, magnitude: -3.5, distance: 1, color: '#32CD32', description: "La planète bleue, notre maison" },
           { id: 'mars', name: 'Mars', ra: 6, dec: 30, magnitude: -2.9, distance: 1.5, color: '#FF4500', description: "La planète rouge, cible des futures missions habitées" },
           { id: 'jupiter', name: 'Jupiter', ra: 8, dec: 40, magnitude: -2.7, distance: 5.2, color: '#DEB887', description: "La plus grande planète du système solaire" },
-          { id: 'saturn', name: 'Saturn', ra: 10, dec: 50, magnitude: 0.6, distance: 9.5, color: '#FFD700', description: "Célèbre pour ses anneaux spectaculaires" }
-        ];
+          { id: 'saturn', name: 'Saturne', ra: 10, dec: 50, magnitude: 0.6, distance: 9.5, color: '#FFD700', description: "Célèbre pour ses anneaux spectaculaires" },
+          { id: 'uranus', name: 'Uranus', ra: 12, dec: 60, magnitude: 5.4, distance: 19.2, color: '#00FFFF', description: "Une planète géante glacée" },
+          { id: 'neptune', name: 'Neptune', ra: 14, dec: 70, magnitude: 7.8, distance: 30.1, color: '#0000FF', description: "La dernière planète du système solaire" },
+          { id: 'sun', name: 'Soleil', ra: 0, dec: 0, magnitude: -26.7, distance: 0, color: '#FFD700', description: "L'étoile centrale de notre système solaire, source de lumière et de chaleur" }
+        ];        
         setPlanets(mockPlanets);
         setError(null);
       } catch (error) {
@@ -45,7 +51,7 @@ function App() {
 
   const filteredStars = (() => {
     let filtered = [...stars];
-    
+
     // Appliquer le filtre sélectionné
     switch (selectedFilter) {
       case 'nearest':
@@ -54,6 +60,11 @@ function App() {
       case 'brightest':
         filtered = filtered.sort((a, b) => a.mag - b.mag).slice(0, 50);
         break;
+    }
+
+    // Appliquer le filtre de magnitude
+    if (isMagnitudeFilterActive) {
+      filtered = filtered.filter(star => star.mag <= magnitudeFilter);
     }
 
     // Appliquer la recherche
@@ -69,7 +80,8 @@ function App() {
   })();
 
   const filteredPlanets = planets.filter(planet =>
-    !searchQuery || planet.name.toLowerCase().includes(searchQuery.toLowerCase())
+    (!searchQuery || planet.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+    (isMagnitudeFilterActive ? planet.magnitude <= magnitudeFilter : true)
   );
 
   if (loading) {
@@ -119,6 +131,27 @@ function App() {
             <option value="nearest">50 étoiles plus proches</option>
             <option value="brightest">50 étoiles plus brillantes</option>
           </select>
+
+          {/* Slider pour filtre de magnitude */}
+          <div className="space-y-2">
+            <label className="text-gray-600">Magnitude maximum :</label>
+            <div className="flex justify-between items-center">
+              <input
+                type="range"
+                min="-5"
+                max="7"
+                step="0.01"
+                value={magnitudeFilter}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  setMagnitudeFilter(Math.max(-5, Math.min(value, 7))); // Limiter la valeur entre -5 et 7
+                  setIsMagnitudeFilterActive(true);
+                }}
+                className="w-full"
+              />
+              <span className="ml-2 text-gray-600">{magnitudeFilter.toFixed(2)}</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -147,4 +180,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
