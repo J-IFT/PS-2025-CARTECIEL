@@ -3,6 +3,7 @@ import { SkyMap } from './components/SkyMap';
 import { Star, Planet } from './types/celestial';
 import { Filter, Search, ZoomIn, ZoomOut } from 'lucide-react';
 import { loadStarData } from './utils/dataLoader';
+import WelcomeScreen from './components/WelcomeScreen';
 
 function App() {
   const [stars, setStars] = useState<Star[]>([]);
@@ -14,6 +15,7 @@ function App() {
   const [scale, setScale] = useState(1);
   const [magnitudeFilter, setMagnitudeFilter] = useState<number>(7);
   const [isMagnitudeFilterActive, setIsMagnitudeFilterActive] = useState(false);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(true);
 
   useEffect(() => {
     async function loadData() {
@@ -104,6 +106,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900">
+      {showWelcomePopup && <WelcomeScreen onDismiss={() => setShowWelcomePopup(false)} />}
       <div className="fixed top-4 left-4 z-10 bg-white/90 p-4 rounded-lg shadow-lg w-64">
         <div className="flex items-center gap-2 mb-4">
           <Filter size={20} />
