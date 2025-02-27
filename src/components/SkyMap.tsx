@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { Star, Planet, Constellation } from '../types/celestial';
+import { Star, Planet } from '../types/celestial';
+import { CONSTELLATIONS } from './constellations';
 import { Info } from 'lucide-react';
 
 interface SkyMapProps {
@@ -9,67 +10,6 @@ interface SkyMapProps {
   selectedFilter: 'nearest' | 'brightest' | 'all';
   scale: number;
 }
-
-const CONSTELLATIONS: Record<string, Constellation> = {
-  'UMa': {
-    id: 'uma',
-    name: 'Ursa Major',
-    stars: ['Dubhe', 'Merak', 'Phecda', 'Megrez', 'Alioth', 'Mizar', 'Alkaid'],
-    lines: [
-      ['Dubhe', 'Merak'],
-      ['Merak', 'Phecda'],
-      ['Phecda', 'Megrez'],
-      ['Megrez', 'Alioth'],
-      ['Alioth', 'Mizar'],
-      ['Mizar', 'Alkaid']
-    ]
-  },
-  'Ori': {
-      id: 'ori',
-      name: 'Orion',
-      stars: ['Betelgeuse', 'Bellatrix', 'Alnilam', 'Mintaka', 'Rigel', 'Saiph'],
-      lines: [
-      ['Betelgeuse', 'Bellatrix'],
-      ['Bellatrix', 'Alnilam'],
-      ['Alnilam', 'Mintaka'],
-      ['Mintaka', 'Rigel'],
-      ['Rigel', 'Saiph']
-    ]
-  },
-    'Cas': {
-      id: 'cas',
-      name: 'Cassiopeia',
-      stars: ['Schedar', 'Caph', 'Gamma Cas', 'Ruchbah', 'Segin'],
-      lines: [
-      ['Schedar', 'Caph'],
-      ['Caph', 'Gamma Cas'],
-      ['Gamma Cas', 'Ruchbah'],
-      ['Ruchbah', 'Segin']
-    ]
-  },
-    'Cyg': {
-      id: 'cyg',
-      name: 'Cygnus',
-      stars: ['Deneb', 'Albireo', 'Sadr', 'Gienah', 'Delta Cyg'],
-      lines: [
-        ['Deneb', 'Albireo'],
-        ['Albireo', 'Sadr'],
-        ['Sadr', 'Gienah'],
-        ['Gienah', 'Delta Cyg']
-    ]
-  },
-    'Leo': {
-      id: 'leo',
-      name: 'Leo',
-      stars: ['Regulus', 'Denebola', 'Algieba', 'Zosma', 'Chort'],
-      lines: [
-        ['Regulus', 'Denebola'],
-        ['Denebola', 'Algieba'],
-        ['Algieba', 'Zosma'],
-        ['Zosma', 'Chort']
-    ]
-  }
-  };
 
 export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -100,7 +40,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
     stars.forEach(star => {
       const x = (star.ra / 24) * canvas.width;
       const y = ((star.dec + 90) / 180) * canvas.height;
-      
+
       ctx.beginPath();
       ctx.arc(x, y, Math.max(3, (6 - star.mag) * 0.5), 0, Math.PI * 2);
       ctx.fillStyle = '#ffffff';
@@ -109,7 +49,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
       // Draw constellation lines if the star is part of the hovered constellation
       if (showConstellations) {
         Object.values(CONSTELLATIONS).forEach(constellation => {
-          ctx.strokeStyle = 'rgb(255, 0, 166)';
+          ctx.strokeStyle = 'rgb(74, 214, 18)';
           ctx.lineWidth = 1;
           constellation.lines.forEach(([star1, star2]) => {
             const s1 = stars.find(s => s.name === star1);
@@ -129,7 +69,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
     planets.forEach(planet => {
       const x = (planet.ra / 24) * canvas.width;
       const y = ((planet.dec + 90) / 180) * canvas.height;
-      
+
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, Math.PI * 2);
       ctx.fillStyle = planet.color;
@@ -169,19 +109,10 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
   };
 
   return (
-    <TransformWrapper
-      initialScale={1}
-      minScale={0.5}
-      maxScale={2}
-      wheel={{ step: 0.1 }}
-    >
+    <TransformWrapper initialScale={1} minScale={0.5} maxScale={2} wheel={{ step: 0.1 }}>
       <div className="relative w-full h-screen">
         <TransformComponent>
-          <canvas
-            ref={canvasRef}
-            onMouseMove={handleMouseMove}
-            className="w-full h-full"
-          />
+          <canvas ref={canvasRef} onMouseMove={handleMouseMove} className="w-full h-full" />
         </TransformComponent>
 
         {hoveredObject && (
@@ -194,42 +125,36 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
           >
             <div className="flex items-center gap-2">
               <Info size={16} />
-              <h3 className="font-semibold">{hoveredObject.name || 'Unknown Object'}</h3>
+              <h3 className="font-semibold">{hoveredObject.name || 'Nom Indisponible'}</h3>
             </div>
-            
             {hoveredObject.type === 'star' && (
               <>
-                {hoveredObject.constellation && (
-                  <p className="text-sm text-gray-600">
-                    Constellation: {hoveredObject.constellation}
-                  </p>
-                )}
-                <p className="text-sm text-gray-600">
-                  Magnitude: {hoveredObject.mag.toFixed(2)}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Distance: {hoveredObject.dist.toFixed(2)} parsecs
-                </p>
+                {hoveredObject.constellation && <p className="text-sm text-gray-600">Constellation: {hoveredObject.constellation}</p>}
+                <p className="text-sm text-gray-600">Magnitude: {hoveredObject.mag.toFixed(2)}</p>
+                <p className="text-sm text-gray-600">Distance: {hoveredObject.dist.toFixed(2)} parsecs</p>
               </>
             )}
-
             {hoveredObject.type === 'planet' && (
               <>
-                <p className="text-sm text-gray-600">
-                  Magnitude: {hoveredObject.magnitude.toFixed(2)}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Distance: {hoveredObject.distance.toFixed(2)} UA
-                </p>
-                {'description' in hoveredObject && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    {hoveredObject.description}
-                  </p>
-                )}
+                <p className="text-sm text-gray-600">Magnitude: {hoveredObject.magnitude.toFixed(2)}</p>
+                <p className="text-sm text-gray-600">Distance: {hoveredObject.distance.toFixed(2)} UA</p>
+                {'description' in hoveredObject && <p className="text-sm text-gray-600 mt-2">{hoveredObject.description}</p>}
               </>
             )}
           </div>
         )}
+
+        {/* BOUTON ON/OFF CONSTELLATIONS */}
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={() => setShowConstellations(!showConstellations)}
+            className={`px-4 py-2 text-white font-semibold rounded-lg transition-all ${
+              showConstellations ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'
+            }`}
+          >
+            {showConstellations ? 'Masquer Constellations' : 'Afficher Constellations'}
+          </button>
+        </div>
       </div>
     </TransformWrapper>
   );

@@ -31,7 +31,7 @@ function App() {
           { id: 'mercury', name: 'Mercure', ra: 2, dec: 10, magnitude: -0.5, distance: 0.4, color: '#E5E5E5', description: "Le plus petit et le plus proche du Soleil" },
           { id: 'venus', name: 'Venus', ra: 4, dec: 20, magnitude: -4.4, distance: 0.7, color: '#FFA500', description: "La planète la plus chaude du système solaire" },
           { id: 'earth', name: 'Terre', ra: 6, dec: 30, magnitude: -3.5, distance: 1, color: '#32CD32', description: "La planète bleue, notre maison" },
-          { id: 'mars', name: 'Mars', ra: 6, dec: 30, magnitude: -2.9, distance: 1.5, color: '#FF4500', description: "La planète rouge, cible des futures missions habitées" },
+          { id: 'mars', name: 'Mars', ra: 7, dec: 35, magnitude: -2.9, distance: 1.5, color: '#FF4500', description: "La planète rouge, cible des futures missions habitées" },
           { id: 'jupiter', name: 'Jupiter', ra: 8, dec: 40, magnitude: -2.7, distance: 5.2, color: '#DEB887', description: "La plus grande planète du système solaire" },
           { id: 'saturn', name: 'Saturne', ra: 10, dec: 50, magnitude: 0.6, distance: 9.5, color: '#FFD700', description: "Célèbre pour ses anneaux spectaculaires" },
           { id: 'uranus', name: 'Uranus', ra: 12, dec: 60, magnitude: 5.4, distance: 19.2, color: '#00FFFF', description: "Une planète géante glacée" },
