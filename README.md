@@ -41,65 +41,85 @@ Eléments de conduite « Agile » Scrum et Kanban Product backlog, Scrum Roles, 
 Burdown Chart, Sprint Review, Sprint Retrospective, Kanban board
 
 Les informations complémentaires suivantes sont disponibles : Les étoiles visibles à l’oeil nu ont une magnitude < 6. Concernant les coordonnées des étoiles et des planètes, les définitions les régissant sont disponibles, entre-autre sur le site : http://physique.unice.fr/sem6/2014-2015/PagesWeb/PT/Etoile/ciel.php
-Une des bases de données disponible : Base de données des étoiles (hygdata_V3.csv), à partir du site http://www.astronexus.com/hyg . Les caractéristiques de cette base de données sont : Caractéristique en Anglais Intitulé en Anglais Signification en Français
+Une des bases de données disponible : Base de données des étoiles (hygdata_V3.csv), à partir du site http://www.astronexus.com/hyg . 
+Les caractéristiques de cette base de données sont : Caractéristique en Anglais Intitulé en Anglais Signification en Français
+
 Id
 The database primary key
 la clé primaire de la base de données
+
 Hip
 The star's ID in the Hipparcos catalog, if known
 L'identifiant de l'étoile dans le catalogue Hipparcos, s'il est connu
+
 hd
 The star's ID in the Henry Draper catalog, if known.
 L'identifiant de l'étoile dans le catalogue Henry Draper, s'il est connu.
+
 hr
 The star's ID in the Harvard Revised catalog, which is the same as its number in the Yale Bright Star Catalog
 Identifiant de l'étoile dans le catalogue Harvard révisé, identique à son numéro dans le catalogue Yale Bright Star
+
 gl
 The star's ID in the third edition of the Gliese Catalog of Nearby Stars
 L'identité de l'étoile dans la troisième édition du catalogue d'étoiles Gliese
+
 bf
 The Bayer / Flamsteed designation, primarily from the Fifth Edition of the Yale Bright Star Catalog
 Désignation Bayer, principalement de la cinquième édition du catalogue Yale Bright Star
+
 ra, dec
 The star's right ascension and declination, for epoch and equinox 2000.0
 Ascension et déclinaison droites de l'étoile, pour l'époque et l'équinoxe 2000.0.
+
 dist
 The star's distance in parsecs, the most common unit in astrometry
 distance de l'étoile en parsecs, unité la plus courante en astrométrie. Pour convertir les parsecs en années-lumière, multipliez ce chiffre par 3,262.
+
 pmra, pmdec
 The star's proper motion in right ascension and declination, in milliarcseconds per year
 mouvement propre de l'étoile en ascension droite et en déclinaison, en milliard secondes par an.
+
 rv
 The star's radial velocity in km/sec.
 La vitesse radiale de l'étoile en km / sec.
+
 mag
 The star's apparent visual magnitude
 magnitude visuelle apparente de l'étoile
-4
+
 absmag
 The star's absolute visual magnitude
 la magnitude visuelle absolue de l'étoile (sa magnitude apparente à une distance de 10 parsecs).
+
 spect
 The star's spectral type
 Le type spectral de l'étoile
+
 ci
 The star's color index (blue magnitude - visual magnitude), where known
 indice de couleur de l'étoile (magnitude du bleu - magnitude visuelle)
+
 x, y, z
 The Cartesian coordinates of the star, in a system based on the equatorial coordinates as seen from Earth
 coordonnées cartésiennes de l'étoile, dans un système basé sur les coordonnées équatoriales vues depuis la Terre
+
 vx, vy, vz
 The Cartesian velocity components of the star, in the same coordinate system described immediately above
 composantes de la vitesse cartésienne de l'étoile.
+
 rarad, decrad, pmrarad, prdecrad
 The positions in radians, and proper motions in radians per year
 position en radians et mouvements appropriés en radians par an
+
 lum
 Star's luminosity as a multiple of Solar luminosity
 Luminosité de l'étoile sous forme de multiple de la luminosité solaire.
+
 var
 Star's standard variable star designation, when known
 désignation d'étoile variable standard de l'étoile, lorsqu'elle est connue.
+
 var \ _min, var \ _max
 tar's approximate magnitude range, for variables
 plage de magnitude approximative des étoiles.
