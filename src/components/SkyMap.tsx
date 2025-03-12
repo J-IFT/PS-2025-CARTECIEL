@@ -30,6 +30,14 @@ function calculatePlanetTemperature(distance: number): number {
   return temperature;
 }
 
+function isStar(obj: Star | Planet): obj is Star {
+  return (obj as Star).dist !== undefined;
+}
+
+function isPlanet(obj: Star | Planet): obj is Planet {
+  return (obj as Planet).distance !== undefined;
+}
+
 export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredObject, setHoveredObject] = useState<(Star | Planet) & { type: 'star' | 'planet' } | null>(null);
@@ -146,7 +154,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
             <Info size={16} />
             <h3 className="font-semibold">{hoveredObject.name || 'Nom Indisponible'}</h3>
           </div>
-          {hoveredObject.type === 'star' && (
+          {isStar(hoveredObject) && (
             <>
               <p className="text-sm text-gray-600">Distance: {hoveredObject.dist.toFixed(2)} parsecs</p>
 
@@ -161,7 +169,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
               )}
             </>
           )}
-          {hoveredObject.type === 'planet' && (
+          {isPlanet(hoveredObject) && (
             <>
               {hoveredObject.distance !== undefined && (
                 <p className="text-sm text-gray-600">Distance: {hoveredObject.distance.toFixed(2)} UA</p>
