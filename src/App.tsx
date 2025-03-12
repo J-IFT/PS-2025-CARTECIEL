@@ -8,7 +8,7 @@ import WelcomeScreen from './components/WelcomeScreen';
 function App() {
   const [stars, setStars] = useState<Star[]>([]);
   const [planets, setPlanets] = useState<Planet[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState<'nearest' | 'brightest' | 'hottest' | 'all'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<'nearest' | 'brightest' | 'hottest' | 'all' | 'biggest'>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -63,7 +63,10 @@ function App() {
         break;
         case 'hottest':
           filtered = filtered.sort((a, b) => (a.ci ?? Infinity) - (b.ci ?? Infinity)).slice(0, 50);
-          break;        
+          break;
+      case 'biggest':
+          filtered = filtered.sort((a, b) => b.mag - a.mag).slice(0, 50);
+          break;
     }
 
     if (searchQuery) {
@@ -130,6 +133,7 @@ function App() {
             <option value="nearest">50 étoiles les plus proches</option>
             <option value="brightest">50 étoiles les plus brillantes</option>
             <option value="hottest">50 étoiles les plus chaudes</option>
+            <option value="biggest">50 étoiles les plus grosses</option> 
           </select>
         </div>
       </div>

@@ -7,7 +7,7 @@ import { Info } from 'lucide-react';
 interface SkyMapProps {
   stars: Star[];
   planets: Planet[];
-  selectedFilter: 'nearest' | 'brightest' | 'all' | 'hottest';
+  selectedFilter: 'nearest' | 'brightest' | 'all' | 'hottest' | 'biggest';
   scale: number;
 }
 
