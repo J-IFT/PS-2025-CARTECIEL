@@ -6,6 +6,9 @@ import { loadStarData } from './utils/dataLoader';
 import WelcomeScreen from './components/WelcomeScreen';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import TimePicker from 'react-time-picker';
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 
 function App() {
   const [stars, setStars] = useState<Star[]>([]);
@@ -16,7 +19,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [scale, setScale] = useState(1);
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // State pour la date sélectionnée
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -144,10 +148,19 @@ function App() {
               selected={selectedDate}
               onChange={(date: Date | null) => setSelectedDate(date)}
               className="w-full pl-10 pr-4 p-2 rounded border border-gray-300"
-              placeholderText="Sélectionnez une date"
+              placeholderText="Sélectionner une date"
             />
-            {/* Icône du calendrier */}
             <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+          </div>
+          <div className="mt-4">
+            <label className="block mb-2 text-sm font-medium text-gray-700">Sélectionner l'heure</label>
+            <TimePicker
+              value={selectedTime}
+              onChange={(value: string | null) => setSelectedTime(value)}
+              className="w-full p-2 rounded border border-gray-300"
+              // disableClock={true} // Désactive l'horloge
+              format="HH:mm"
+            />
           </div>
         </div>
       </div>
