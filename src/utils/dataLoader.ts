@@ -27,7 +27,7 @@ interface StarDataRow {
 
 export async function loadStarData(): Promise<Star[]> {
   try {
-    const response = await fetch('/public/hygdata_v3_trie.csv');
+    const response = await fetch('/hygdata_v3_trie.csv');
     const text = await response.text();
     
     return new Promise((resolve, reject) => {
