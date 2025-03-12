@@ -124,6 +124,25 @@ var \ _min, var \ _max
 tar's approximate magnitude range, for variables
 plage de magnitude approximative des étoiles.
 
+### 🐱 Notre projet + tutoriel :
+Hébergement : Vercel
+Local : npm install puis npm run dev
+Tutoriel : intégré directement dans l'application. copie ci-dessous :
+
+"Bienvenue sur la carte du ciel 🌌
+
+Voici comment utiliser cette application pour explorer les étoiles et les planètes :
+
+🔍 Rechercher : Utilisez la barre de recherche pour trouver des étoiles ou des constellations spécifiques.
+
+🌟 Filtres : Appliquez des filtres pour voir les étoiles les plus proches, les plus brillantes ou toutes les étoiles visibles.
+
+💡 Magnitude : Ajustez le filtre de magnitude pour voir uniquement les étoiles ayant une certaine luminosité.
+
+🔄 Zoom : Utilisez les boutons de zoom ou la molette de la souris pour agrandir ou réduire la carte du ciel et explorer plus en détail. 👩‍🚀
+
+Cliquez sur "Explorer" pour fermer ce guide et commencer votre exploration ! 🌠"
+
 ### 💻 Applications et langages utilisés :
 
 + Visual studio code
