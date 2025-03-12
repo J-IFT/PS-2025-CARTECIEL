@@ -137,7 +137,7 @@ function App() {
 
           {/* Slider pour filtre de magnitude */}
           <div className="space-y-2">
-            <label className="text-gray-600">Magnitude maximum :</label>
+            <label className="text-gray-600">Magnitude maximum = étoiles les plus chaudes :</label>
             <div className="flex justify-between items-center">
               <input
                 type="range"
