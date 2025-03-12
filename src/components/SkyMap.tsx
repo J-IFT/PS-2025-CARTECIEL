@@ -44,6 +44,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale, dateTime }: SkyM
   const [hoveredObject, setHoveredObject] = useState<(Star | Planet) & { type: 'star' | 'planet' } | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [showConstellations, setShowConstellations] = useState(false);
+  const [highlightedConstellation, setHighlightedConstellation] = useState<string | null>(null);
 
   // Log pour afficher la dateTime, à l'intérieur de la fonction
   useEffect(() => {
@@ -74,29 +75,31 @@ export function SkyMap({ stars, planets, selectedFilter, scale, dateTime }: SkyM
       const x = (star.ra / 24) * canvas.width;
       const y = ((star.dec + 90) / 180) * canvas.height;
 
+      const isHighlighted = highlightedConstellation && star.constellation === highlightedConstellation;
+
       ctx.beginPath();
       ctx.arc(x, y, Math.max(3, (6 - star.mag) * 0.5), 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = isHighlighted ? '#FF4500' : '#ffffff';
       ctx.fill();
-
-      // Draw constellation lines if the star is part of the hovered constellation
-      if (showConstellations) {
-        Object.values(CONSTELLATIONS).forEach(constellation => {
-          ctx.strokeStyle = 'rgb(74, 214, 18)';
-          ctx.lineWidth = 1;
-          constellation.lines.forEach(([star1, star2]) => {
-            const s1 = stars.find(s => s.name === star1);
-            const s2 = stars.find(s => s.name === star2);
-            if (s1 && s2) {
-              ctx.beginPath();
-              ctx.moveTo((s1.ra / 24) * canvas.width, ((s1.dec + 90) / 180) * canvas.height);
-              ctx.lineTo((s2.ra / 24) * canvas.width, ((s2.dec + 90) / 180) * canvas.height);
-              ctx.stroke();
-            }
-          });
-        });
-      }
     });
+
+    // Draw constellation lines if the star is part of the hovered constellation
+    if (showConstellations) {
+      Object.values(CONSTELLATIONS).forEach(constellation => {
+        ctx.strokeStyle = 'rgb(74, 214, 18)';
+        ctx.lineWidth = 1;
+        constellation.lines.forEach(([star1, star2]) => {
+          const s1 = stars.find(s => s.name === star1);
+          const s2 = stars.find(s => s.name === star2);
+          if (s1 && s2) {
+            ctx.beginPath();
+            ctx.moveTo((s1.ra / 24) * canvas.width, ((s1.dec + 90) / 180) * canvas.height);
+            ctx.lineTo((s2.ra / 24) * canvas.width, ((s2.dec + 90) / 180) * canvas.height);
+            ctx.stroke();
+          }
+        });
+      });
+    }
 
     // Draw planets
     planets.forEach(planet => {
@@ -110,7 +113,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale, dateTime }: SkyM
     });
 
     ctx.restore();
-  }, [stars, planets, selectedFilter, scale, hoveredObject, showConstellations]);
+  }, [stars, planets, selectedFilter, scale, hoveredObject, showConstellations, highlightedConstellation]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const canvas = canvasRef.current;
@@ -134,11 +137,19 @@ export function SkyMap({ stars, planets, selectedFilter, scale, dateTime }: SkyM
       return Math.sqrt(Math.pow(x - planetX, 2) + Math.pow(y - planetY, 2)) < 5;
     });
 
-    setHoveredObject(
-      hoveredStar ? { ...hoveredStar, type: 'star' as const } :
-      hoveredPlanet ? { ...hoveredPlanet, type: 'planet' as const } :
-      null
-    );
+    if (hoveredStar) {
+      // Highlight all stars in the same constellation
+      setHighlightedConstellation(hoveredStar.constellation || null);
+      setHoveredObject({ ...hoveredStar, type: 'star' });
+
+    } else if (hoveredPlanet) {
+      setHoveredObject({ ...hoveredPlanet, type: 'planet' });
+      setHighlightedConstellation(null);
+
+    } else {
+      setHoveredObject(null);
+      setHighlightedConstellation(null);
+    }
   };
 
   return (
