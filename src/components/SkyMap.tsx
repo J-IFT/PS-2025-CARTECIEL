@@ -7,15 +7,42 @@ import { Info } from 'lucide-react';
 interface SkyMapProps {
   stars: Star[];
   planets: Planet[];
-  selectedFilter: 'nearest' | 'brightest' | 'all';
+  selectedFilter: 'nearest' | 'brightest' | 'all' | 'hottest' | 'biggest';
   scale: number;
+}
+
+function calculateTemperatureFromMag(MV: number): number {
+  const temperature = 4600 * (1 / (MV + 0.1)) + 3000;
+  
+  if (temperature < 0) {
+    return 0;
+  }
+  return temperature;
+}
+
+function calculatePlanetTemperature(distance: number): number {
+  const temperature = 279 * Math.pow(1 / distance, 0.5);
+  
+  if (temperature < 0) {
+    return 0;
+  }
+
+  return temperature;
+}
+
+function isStar(obj: Star | Planet): obj is Star {
+  return (obj as Star).dist !== undefined;
+}
+
+function isPlanet(obj: Star | Planet): obj is Planet {
+  return (obj as Planet).distance !== undefined;
 }
 
 export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredObject, setHoveredObject] = useState<(Star | Planet) & { type: 'star' | 'planet' } | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [showConstellations, setShowConstellations] = useState(true);
+  const [showConstellations, setShowConstellations] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -116,33 +143,51 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
         </TransformComponent>
 
         {hoveredObject && (
-          <div
-            className="absolute bg-white/90 p-4 rounded-lg shadow-lg max-w-xs"
-            style={{
-              left: mousePos.x + 10,
-              top: mousePos.y + 10,
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Info size={16} />
-              <h3 className="font-semibold">{hoveredObject.name || 'Nom Indisponible'}</h3>
-            </div>
-            {hoveredObject.type === 'star' && (
-              <>
-                {hoveredObject.constellation && <p className="text-sm text-gray-600">Constellation: {hoveredObject.constellation}</p>}
-                <p className="text-sm text-gray-600">Magnitude: {hoveredObject.mag.toFixed(2)}</p>
-                <p className="text-sm text-gray-600">Distance: {hoveredObject.dist.toFixed(2)} parsecs</p>
-              </>
-            )}
-            {hoveredObject.type === 'planet' && (
-              <>
-                <p className="text-sm text-gray-600">Magnitude: {hoveredObject.magnitude.toFixed(2)}</p>
-                <p className="text-sm text-gray-600">Distance: {hoveredObject.distance.toFixed(2)} UA</p>
-                {'description' in hoveredObject && <p className="text-sm text-gray-600 mt-2">{hoveredObject.description}</p>}
-              </>
-            )}
+        <div
+          className="absolute bg-white/90 p-4 rounded-lg shadow-lg max-w-xs"
+          style={{
+            left: mousePos.x + 10,
+            top: mousePos.y + 10,
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <Info size={16} />
+            <h3 className="font-semibold">{hoveredObject.name || 'Nom Indisponible'}</h3>
           </div>
-        )}
+          {isStar(hoveredObject) && (
+            <>
+              <p className="text-sm text-gray-600">Distance: {hoveredObject.dist.toFixed(2)} parsecs</p>
+
+              {hoveredObject.absmag !== undefined && (
+                <p className="text-sm text-gray-600">
+                  Température: {calculateTemperatureFromMag(hoveredObject.absmag).toFixed(0)} K
+                </p>
+              )}
+              
+              {hoveredObject.constellation && (
+                <p className="text-sm text-gray-600">Constellation: {hoveredObject.constellation}</p>
+              )}
+            </>
+          )}
+          {isPlanet(hoveredObject) && (
+            <>
+              {hoveredObject.distance !== undefined && (
+                <p className="text-sm text-gray-600">Distance: {hoveredObject.distance.toFixed(2)} UA</p>
+              )}
+
+              {hoveredObject.distance !== undefined && (
+                <p className="text-sm text-gray-600">
+                  Température: {calculatePlanetTemperature(hoveredObject.distance).toFixed(0)} K
+                </p>
+              )}
+
+              {'description' in hoveredObject && hoveredObject.description && (
+                <p className="text-sm text-gray-600 mt-2">{hoveredObject.description}</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
         {/* BOUTON ON/OFF CONSTELLATIONS */}
         <div className="absolute top-4 right-4">
