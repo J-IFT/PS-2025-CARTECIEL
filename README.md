@@ -126,7 +126,9 @@ plage de magnitude approximative des étoiles.
 
 ### 🐱 Notre projet + tutoriel :
 Hébergement : Vercel
+
 Local : npm install puis npm run dev
+
 Tutoriel : intégré directement dans l'application. copie ci-dessous :
 
 "Bienvenue sur la carte du ciel 🌌
