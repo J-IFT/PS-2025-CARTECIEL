@@ -8,13 +8,11 @@ import WelcomeScreen from './components/WelcomeScreen';
 function App() {
   const [stars, setStars] = useState<Star[]>([]);
   const [planets, setPlanets] = useState<Planet[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState<'nearest' | 'brightest' | 'all'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<'nearest' | 'brightest' | 'hottest' | 'all'>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [scale, setScale] = useState(1);
-  const [magnitudeFilter, setMagnitudeFilter] = useState<number>(7);
-  const [isMagnitudeFilterActive, setIsMagnitudeFilterActive] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
 
   useEffect(() => {
@@ -37,7 +35,8 @@ function App() {
           { id: 'uranus', name: 'Uranus', ra: 12, dec: 60, magnitude: 5.4, distance: 19.2, color: '#00FFFF', description: "Une planète géante glacée" },
           { id: 'neptune', name: 'Neptune', ra: 14, dec: 70, magnitude: 7.8, distance: 30.1, color: '#0000FF', description: "La dernière planète du système solaire" },
           { id: 'sun', name: 'Soleil', ra: 0, dec: 0, magnitude: -26.7, distance: 0, color: '#FFD700', description: "L'étoile centrale de notre système solaire, source de lumière et de chaleur" }
-        ];        
+        ];
+             
         setPlanets(mockPlanets);
         setError(null);
       } catch (error) {
@@ -62,14 +61,11 @@ function App() {
       case 'brightest':
         filtered = filtered.sort((a, b) => a.mag - b.mag).slice(0, 50);
         break;
+        case 'hottest':
+          filtered = filtered.sort((a, b) => (a.ci ?? Infinity) - (b.ci ?? Infinity)).slice(0, 50);
+          break;        
     }
 
-    // Appliquer le filtre de magnitude
-    if (isMagnitudeFilterActive) {
-      filtered = filtered.filter(star => star.mag <= magnitudeFilter);
-    }
-
-    // Appliquer la recherche
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(star => 
@@ -82,8 +78,7 @@ function App() {
   })();
 
   const filteredPlanets = planets.filter(planet =>
-    (!searchQuery || planet.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
-    (isMagnitudeFilterActive ? planet.magnitude <= magnitudeFilter : true)
+    (!searchQuery || planet.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   if (loading) {
@@ -107,6 +102,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-900">
       {showWelcomePopup && <WelcomeScreen onDismiss={() => setShowWelcomePopup(false)} />}
+      
       <div className="fixed top-4 left-4 z-10 bg-white/90 p-4 rounded-lg shadow-lg w-64">
         <div className="flex items-center gap-2 mb-4">
           <Filter size={20} />
@@ -127,34 +123,14 @@ function App() {
 
           <select
             value={selectedFilter}
-            onChange={(e) => setSelectedFilter(e.target.value as 'nearest' | 'brightest' | 'all')}
+            onChange={(e) => setSelectedFilter(e.target.value as 'nearest' | 'brightest' | 'hottest' | 'all')}
             className="w-full p-2 rounded border border-gray-300"
           >
             <option value="all">Toutes les étoiles</option>
-            <option value="nearest">50 étoiles plus proches</option>
-            <option value="brightest">50 étoiles plus brillantes</option>
+            <option value="nearest">50 étoiles les plus proches</option>
+            <option value="brightest">50 étoiles les plus brillantes</option>
+            <option value="hottest">50 étoiles les plus chaudes</option>
           </select>
-
-          {/* Slider pour filtre de magnitude */}
-          <div className="space-y-2">
-            <label className="text-gray-600">Magnitude maximum = étoiles les plus chaudes :</label>
-            <div className="flex justify-between items-center">
-              <input
-                type="range"
-                min="-5"
-                max="7"
-                step="0.01"
-                value={magnitudeFilter}
-                onChange={(e) => {
-                  const value = parseFloat(e.target.value);
-                  setMagnitudeFilter(Math.max(-5, Math.min(value, 7))); // Limiter la valeur entre -5 et 7
-                  setIsMagnitudeFilterActive(true);
-                }}
-                className="w-full"
-              />
-              <span className="ml-2 text-gray-600">{magnitudeFilter.toFixed(2)}</span>
-            </div>
-          </div>
         </div>
       </div>
 
