@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import { SkyMap } from './components/SkyMap';
 import { Star, Planet } from './types/celestial';
-import { Filter, Search, ZoomIn, ZoomOut } from 'lucide-react';
+import { Calendar, Filter, Search, ZoomIn, ZoomOut } from 'lucide-react';
 import { loadStarData } from './utils/dataLoader';
 import WelcomeScreen from './components/WelcomeScreen';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import TimePicker from 'react-time-picker';
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 
 function App() {
   const [stars, setStars] = useState<Star[]>([]);
@@ -14,6 +19,9 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [scale, setScale] = useState(1);
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [combinedDateTime, setCombinedDateTime] = useState<Date | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -49,6 +57,18 @@ function App() {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (selectedDate && selectedTime) {
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      const newDate = new Date(selectedDate);
+      newDate.setHours(hours);
+      newDate.setMinutes(minutes);
+      setCombinedDateTime(newDate);
+    }
+  }, [selectedDate, selectedTime]);
+  
+  console.log("Date et heure fusionnées :", combinedDateTime);
 
   const filteredStars = (() => {
     let filtered = [...stars];
@@ -135,6 +155,26 @@ function App() {
             <option value="hottest">50 étoiles les plus chaudes</option>
             <option value="biggest">50 étoiles les plus grosses</option> 
           </select>
+
+          <div className="relative mt-4">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date: Date | null) => setSelectedDate(date)}
+              className="w-full pl-10 pr-4 p-2 rounded border border-gray-300"
+              placeholderText="Sélectionner une date"
+            />
+            <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+          </div>
+          <div className="mt-4">
+            <label className="block mb-2 text-sm font-medium text-gray-700">Sélectionner l'heure</label>
+            <TimePicker
+              value={selectedTime}
+              onChange={(value: string | null) => setSelectedTime(value)}
+              className="w-full p-2 rounded border border-gray-300"
+              // disableClock={true} // Désactive l'horloge
+              format="HH:mm"
+            />
+          </div>
         </div>
       </div>
 
@@ -158,6 +198,7 @@ function App() {
         planets={filteredPlanets}
         selectedFilter={selectedFilter}
         scale={scale}
+        dateTime={combinedDateTime} 
       />
     </div>
   );
