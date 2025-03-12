@@ -34,7 +34,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredObject, setHoveredObject] = useState<(Star | Planet) & { type: 'star' | 'planet' } | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [showConstellations, setShowConstellations] = useState(true);
+  const [showConstellations, setShowConstellations] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
