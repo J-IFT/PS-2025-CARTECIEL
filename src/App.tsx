@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { SkyMap } from './components/SkyMap';
 import { Star, Planet } from './types/celestial';
-import { Filter, Search, ZoomIn, ZoomOut } from 'lucide-react';
+import { Calendar, Filter, Search, ZoomIn, ZoomOut } from 'lucide-react';
 import { loadStarData } from './utils/dataLoader';
 import WelcomeScreen from './components/WelcomeScreen';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function App() {
   const [stars, setStars] = useState<Star[]>([]);
@@ -14,6 +16,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [scale, setScale] = useState(1);
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // State pour la date sélectionnée
 
   useEffect(() => {
     async function loadData() {
@@ -135,6 +138,17 @@ function App() {
             <option value="hottest">50 étoiles les plus chaudes</option>
             <option value="biggest">50 étoiles les plus grosses</option> 
           </select>
+
+          <div className="relative mt-4">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date: Date | null) => setSelectedDate(date)}
+              className="w-full pl-10 pr-4 p-2 rounded border border-gray-300"
+              placeholderText="Sélectionnez une date"
+            />
+            {/* Icône du calendrier */}
+            <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+          </div>
         </div>
       </div>
 
