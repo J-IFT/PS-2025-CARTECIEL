@@ -9,6 +9,7 @@ interface SkyMapProps {
   planets: Planet[];
   selectedFilter: 'nearest' | 'brightest' | 'all' | 'hottest' | 'biggest';
   scale: number;
+  dateTime: Date | null; // Ajout de la date et l'heure fusionnées
 }
 
 function calculateTemperatureFromMag(MV: number): number {
@@ -38,12 +39,17 @@ function isPlanet(obj: Star | Planet): obj is Planet {
   return (obj as Planet).distance !== undefined;
 }
 
-export function SkyMap({ stars, planets, selectedFilter, scale }: SkyMapProps) {
+export function SkyMap({ stars, planets, selectedFilter, scale, dateTime }: SkyMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredObject, setHoveredObject] = useState<(Star | Planet) & { type: 'star' | 'planet' } | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [showConstellations, setShowConstellations] = useState(false);
 
+  // Log pour afficher la dateTime, à l'intérieur de la fonction
+  useEffect(() => {
+    console.log("Affichage pour la date :", dateTime);
+  }, [dateTime]);
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

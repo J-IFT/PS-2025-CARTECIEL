@@ -21,6 +21,7 @@ function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [combinedDateTime, setCombinedDateTime] = useState<Date | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -56,6 +57,18 @@ function App() {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (selectedDate && selectedTime) {
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      const newDate = new Date(selectedDate);
+      newDate.setHours(hours);
+      newDate.setMinutes(minutes);
+      setCombinedDateTime(newDate);
+    }
+  }, [selectedDate, selectedTime]);
+  
+  console.log("Date et heure fusionnées :", combinedDateTime);
 
   const filteredStars = (() => {
     let filtered = [...stars];
@@ -185,6 +198,7 @@ function App() {
         planets={filteredPlanets}
         selectedFilter={selectedFilter}
         scale={scale}
+        dateTime={combinedDateTime} 
       />
     </div>
   );
