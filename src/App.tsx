@@ -219,6 +219,19 @@ function App() {
               format="HH:mm"
             />
           </div>
+          
+          <button
+            onClick={() => {
+              setSelectedFilter('all');
+              setSearchQuery('');
+              setSelectedCity(undefined);
+              setSelectedDate(null);
+              setSelectedTime(null);
+            }}
+            className="w-full bg-red-600 text-white p-2 rounded hover:bg-red-700 transition"
+          >
+            Réinitialiser les filtres
+          </button>
         </div>
       </div>
 
