@@ -21,7 +21,19 @@ function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string | undefined>(undefined);
   const [combinedDateTime, setCombinedDateTime] = useState<Date | null>(null);
+  const [randomized, setRandomized] = useState(false);
+
+  const cities = [
+    "Paris", "Marseille", "Lyon", "Toulouse", "Nice", 
+    "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille",
+    "Rennes", "Reims", "Le Havre", "Saint-Étienne", " Toulon",
+    "Grenoble", "Dijon", "Angers", "Le Mans",
+    "New York", "Tokyo", "Londres", "Sydney", "Berlin", 
+    "Moscou", "Cape Town", "Rio de Janeiro", "Los Angeles"
+  ];
+  
 
   useEffect(() => {
     async function loadData() {
@@ -59,6 +71,14 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (selectedDate && selectedTime && selectedCity) {
+      setRandomized(true);
+    } else {
+      setRandomized(false);
+    }
+  }, [selectedDate, selectedTime, selectedCity]);
+
+  useEffect(() => {
     if (selectedDate && selectedTime) {
       const [hours, minutes] = selectedTime.split(':').map(Number);
       const newDate = new Date(selectedDate);
@@ -67,11 +87,20 @@ function App() {
       setCombinedDateTime(newDate);
     }
   }, [selectedDate, selectedTime]);
+
+  const randomizeStars = () => {
+    return stars.map(star => {
+      return {
+        ...star,
+        ra: (Math.random() * 24),
+        dec: (Math.random() * 180 - 90),
+      };
+    });
+  };
   
-  console.log("Date et heure fusionnées :", combinedDateTime);
 
   const filteredStars = (() => {
-    let filtered = [...stars];
+    let filtered = randomized ? randomizeStars() : [...stars];
 
     // Appliquer le filtre sélectionné
     switch (selectedFilter) {
@@ -81,12 +110,12 @@ function App() {
       case 'brightest':
         filtered = filtered.sort((a, b) => a.mag - b.mag).slice(0, 50);
         break;
-        case 'hottest':
-          filtered = filtered.sort((a, b) => (a.ci ?? Infinity) - (b.ci ?? Infinity)).slice(0, 50);
-          break;
+      case 'hottest':
+        filtered = filtered.sort((a, b) => (a.ci ?? Infinity) - (b.ci ?? Infinity)).slice(0, 50);
+        break;
       case 'biggest':
-          filtered = filtered.sort((a, b) => b.mag - a.mag).slice(0, 50);
-          break;
+        filtered = filtered.sort((a, b) => b.mag - a.mag).slice(0, 50);
+        break;
     }
 
     if (searchQuery) {
@@ -156,6 +185,22 @@ function App() {
             <option value="biggest">50 étoiles les plus grosses</option> 
           </select>
 
+          <div className="space-y-2">
+          <select
+            value={selectedCity === undefined ? '' : selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="w-full p-2 rounded border border-gray-300"
+          >
+            <option value="" disabled>
+              Sélectionner une ville
+            </option>
+              
+            {cities.map((city, idx) => (
+              <option key={idx} value={city}>{city}</option>
+            ))}
+            </select>
+          </div>
+
           <div className="relative mt-4">
             <DatePicker
               selected={selectedDate}
@@ -171,7 +216,6 @@ function App() {
               value={selectedTime}
               onChange={(value: string | null) => setSelectedTime(value)}
               className="w-full p-2 rounded border border-gray-300"
-              // disableClock={true} // Désactive l'horloge
               format="HH:mm"
             />
           </div>
