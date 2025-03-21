@@ -12,10 +12,11 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onDismiss }) => {
         <p className="mb-6 text-lg">Voici comment utiliser cette application pour explorer les étoiles et les planètes :</p>
 
         <ul className="text-left mb-6 space-y-5 text-lg">
-          <li><strong>🔍 Rechercher :</strong> Utilisez la barre de recherche pour trouver des étoiles ou des constellations spécifiques.</li>
-          <li><strong>🌟 Filtres :</strong> Appliquez des filtres pour voir les étoiles les plus proches, les plus brillantes ou toutes les étoiles visibles.</li>
-          <li><strong>💡 Magnitude :</strong> Ajustez le filtre de magnitude pour voir uniquement les étoiles ayant une certaine luminosité.</li>
-          <li><strong>🔄 Zoom :</strong> Utilisez les boutons de zoom ou la molette de la souris pour agrandir ou réduire la carte du ciel et explorer plus en détail. 👩‍🚀</li>
+          <li><strong>🔍 Recherche :</strong> Utilisez la barre de recherche pour trouver des étoiles ou des constellations spécifiques.</li>
+          <li><strong>🌟 Filtres :</strong> Appliquez des filtres pour voir les étoiles les plus proches, les plus brillantes, les plus grosses, les plus chaudes ou toutes les étoiles visibles.</li>
+          <li><strong>🌍 Localisation :</strong> Sélectionnez une ville, mais cette option nécessite également de renseigner la <strong>date</strong> et <strong>heure</strong> pour afficher les étoiles visibles à ce moment-là.</li>
+          <li><strong>🌌 Constellations :</strong> Lors du survol d'une étoile, toutes les étoiles de la même constellation seront affichées en rouge.</li>
+          <li><strong>🔄 Zoom :</strong> Utilisez les boutons de zoom ou la molette de la souris pour ajuster l'échelle de la carte du ciel.</li>
         </ul>
 
         <p className="mb-6 text-lg">Cliquez sur "Explorer" pour fermer ce guide et commencer votre exploration ! 🌠</p>
