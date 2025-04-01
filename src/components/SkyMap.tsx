@@ -46,9 +46,7 @@ export function SkyMap({ stars, planets, selectedFilter, scale, dateTime }: SkyM
   const [showConstellations, setShowConstellations] = useState(false);
   const [highlightedConstellation, setHighlightedConstellation] = useState<string | null>(null);
 
-  // Log pour afficher la dateTime, à l'intérieur de la fonction
   useEffect(() => {
-    console.log("Affichage pour la date :", dateTime);
   }, [dateTime]);
   
   useEffect(() => {
